@@ -5,7 +5,7 @@ import { Clock, RefreshCw, Play, Home, Gift } from 'lucide-react';
 const POEM_LINES = [
   "죽는 날까지 하늘을 우러러",
   "한 점 부끄럼이 없기를",
-  "잎새에 이는 바람에도", 
+  "잎새에 이는 바람에도",
   "나는 괴로워했다",
   "별을 노래하는 마음으로",
   "모든 죽어가는 것을 사랑해야지",
@@ -24,141 +24,82 @@ const shuffleArray = (array) => {
   return newArray;
 };
 
-// 더 사람스러운 윤동주 캐릭터 컴포넌트
+// 동물의 숲 스타일 윤동주 캐릭터 컴포넌트
 const DongjuCharacter = ({ mood = 'happy', size = 'medium' }) => {
   const sizeMap = {
-    small: { w: 20, h: 32 },
-    medium: { w: 24, h: 36 },
-    large: { w: 28, h: 40 },
-    xlarge: { w: 32, h: 44 }
+    small: { scale: 'scale-75' },
+    medium: { scale: 'scale-90' },
+    large: { scale: 'scale-100' },
+    xlarge: { scale: 'scale-125' }
   };
 
-  const { w, h } = sizeMap[size];
+  const { scale } = sizeMap[size];
 
   return (
-    <div className={`relative w-${w} h-${h} mx-auto`}>
+    <div className={`relative w-36 h-36 mx-auto ${scale}`}>
       {/* 그림자 */}
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-4 bg-black/20 rounded-full blur-sm"></div>
-      
-      {/* 다리 (더 길게) */}
-      <div className="absolute top-24 left-1/2 transform -translate-x-1/2 translate-x-2 w-4 h-12 bg-gradient-to-b from-gray-600 via-gray-700 to-gray-800 rounded-full border-2 border-gray-500"></div>
-      <div className="absolute top-24 left-1/2 transform -translate-x-1/2 -translate-x-2 w-4 h-12 bg-gradient-to-b from-gray-600 via-gray-700 to-gray-800 rounded-full border-2 border-gray-500"></div>
-      
-      {/* 신발 */}
-      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 translate-x-2 w-6 h-3 bg-gradient-to-br from-gray-900 to-black rounded-full border border-gray-700 shadow-lg"></div>
-      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 -translate-x-2 w-6 h-3 bg-gradient-to-br from-gray-900 to-black rounded-full border border-gray-700 shadow-lg"></div>
-      
-      {/* 몸통 (더 인간적인 비율로) */}
-      <div className="absolute top-14 left-1/2 transform -translate-x-1/2 w-16 h-14 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 rounded-3xl border-3 border-blue-700 shadow-lg">
-        {/* 셔츠 디테일 */}
-        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-10 h-8 bg-white/25 rounded-xl"></div>
-        <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-1.5 h-6 bg-white rounded-full"></div>
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-white rounded-full"></div>
-        <div className="absolute top-6.5 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-white rounded-full"></div>
-        
-        {/* 셔츠 주름 */}
-        <div className="absolute top-2 left-3 w-8 h-0.5 bg-blue-600/50 rounded-full"></div>
-        <div className="absolute top-4 right-3 w-6 h-0.5 bg-blue-600/50 rounded-full"></div>
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-28 h-6 bg-black/20 rounded-full blur-lg"></div>
+
+      {/* 몸통 */}
+      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-gradient-to-br from-blue-300 to-blue-500 rounded-3xl border-4 border-blue-600 shadow-xl" style={{ borderBottomLeftRadius: '20px', borderBottomRightRadius: '20px' }}>
+        {/* 옷깃 */}
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-12 h-6 bg-white/60 rounded-b-xl border-b-2 border-white/80"></div>
+        {/* 팔 */}
+        <div className="absolute top-8 -left-4 w-6 h-12 bg-gradient-to-br from-blue-200 to-blue-400 rounded-2xl transform -rotate-12 shadow-md"></div>
+        <div className="absolute top-8 -right-4 w-6 h-12 bg-gradient-to-br from-blue-200 to-blue-400 rounded-2xl transform rotate-12 shadow-md"></div>
       </div>
-      
+
+      {/* 다리 */}
+      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-x-4 w-8 h-8 bg-gray-800 rounded-full border-2 border-gray-900 shadow-lg"></div>
+      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 -translate-x-4 w-8 h-8 bg-gray-800 rounded-full border-2 border-gray-900 shadow-lg"></div>
+
       {/* 목 */}
-      <div className="absolute top-12 left-1/2 transform -translate-x-1/2 w-6 h-4 bg-gradient-to-b from-amber-200 to-amber-300 rounded-lg border border-amber-400"></div>
+      <div className="absolute top-20 left-1/2 transform -translate-x-1/2 w-8 h-4 bg-amber-200 rounded-xl"></div>
       
-      {/* 머리 (더 자연스러운 크기와 형태) */}
-      <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-18 h-18 bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300 rounded-3xl border-3 border-amber-400 shadow-lg" style={{borderRadius: '50% 50% 45% 45%'}}>
-        
+      {/* 머리 */}
+      <div className="absolute top-10 left-1/2 transform -translate-x-1/2 w-28 h-28 bg-gradient-to-br from-amber-100 to-amber-200 rounded-full border-4 border-amber-300 shadow-xl">
         {/* 학사모 */}
-        <div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
-          {/* 학사모 모자 (더 사실적으로) */}
-          <div className="w-14 h-10 bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-t-2xl border-2 border-gray-700 shadow-xl relative">
-            <div className="absolute inset-1 bg-gradient-to-br from-gray-700 to-gray-800 rounded-t-xl"></div>
-            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gray-600 rounded-full"></div>
-          </div>
-          {/* 학사모 모판 */}
-          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-20 h-3 bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-full border-2 border-gray-700 shadow-xl">
-            <div className="absolute inset-1 bg-gradient-to-br from-gray-700 to-gray-800 rounded-full"></div>
-          </div>
-          {/* 학사모 술 */}
-          <div className="absolute -top-2 right-0 w-1 h-6 bg-yellow-500 rounded-full shadow-md"></div>
-          <div className="absolute top-4 right-0 w-3 h-3 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-sm border border-yellow-700 transform rotate-45 shadow-md"></div>
-        </div>
-        
-        {/* 머리카락 (더 자연스럽게) */}
-        <div className="absolute top-0 left-2 w-3 h-6 bg-gradient-to-b from-amber-800 to-amber-900 rounded-2xl"></div>
-        <div className="absolute top-0 right-2 w-3 h-6 bg-gradient-to-b from-amber-800 to-amber-900 rounded-2xl"></div>
-        <div className="absolute top-1 left-1/2 transform -translate-x-1/2 w-8 h-4 bg-gradient-to-b from-amber-800 to-amber-900 rounded-t-full"></div>
-        
-        {/* 이마 */}
-        <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-12 h-3 bg-gradient-to-b from-amber-150 to-amber-200 rounded-t-xl"></div>
-        
-        {/* 눈썹 */}
-        <div className="absolute top-5 left-4 w-3 h-1 bg-amber-800 rounded-full transform -rotate-12"></div>
-        <div className="absolute top-5 right-4 w-3 h-1 bg-amber-800 rounded-full transform rotate-12"></div>
-        
-        {/* 눈 (더 사실적으로) */}
-        <div className="absolute top-6 left-4 w-4 h-4 bg-white rounded-full border-2 border-gray-300 shadow-inner">
-          <div className="absolute top-1 left-1 w-3 h-3 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full">
-            <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-white rounded-full"></div>
-            <div className="absolute top-1 right-1 w-0.5 h-0.5 bg-white rounded-full"></div>
-          </div>
-        </div>
-        <div className="absolute top-6 right-4 w-4 h-4 bg-white rounded-full border-2 border-gray-300 shadow-inner">
-          <div className="absolute top-1 right-1 w-3 h-3 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full">
-            <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-white rounded-full"></div>
-            <div className="absolute top-1 right-1 w-0.5 h-0.5 bg-white rounded-full"></div>
-          </div>
-        </div>
-        
+        <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-28 h-4 bg-gray-800 rounded-full border-2 border-gray-900 shadow-xl"></div>
+        <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-20 h-10 bg-gray-800 rounded-t-2xl border-2 border-gray-900 shadow-xl"></div>
+        <div className="absolute -top-12 right-6 w-2 h-10 bg-yellow-500 rounded-full shadow-md"></div>
+        <div className="absolute -top-2 right-4 w-4 h-4 bg-yellow-400 rounded-full shadow-md"></div>
+
+        {/* 머리카락 */}
+        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-16 h-8 bg-gray-800 rounded-t-full shadow-lg"></div>
+
+        {/* 눈 */}
+        <div className="absolute top-1/2 left-1/4 transform -translate-y-1/2 w-3 h-3 bg-gray-800 rounded-full border-2 border-white"></div>
+        <div className="absolute top-1/2 right-1/4 transform -translate-y-1/2 w-3 h-3 bg-gray-800 rounded-full border-2 border-white"></div>
+
+        {/* 입 */}
+        {mood === 'happy' && (
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-10 h-4 bg-red-400 rounded-full shadow-sm"></div>
+        )}
+        {mood === 'worried' && (
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-10 h-4 bg-gray-700 rounded-full border-b-2 border-gray-500"></div>
+        )}
+        {mood === 'excited' && (
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-10 h-4 bg-gray-800 rounded-full shadow-sm"></div>
+        )}
+
         {/* 뺨 홍조 */}
         {mood === 'happy' && (
           <>
-            <div className="absolute top-8 left-1 w-4 h-3 bg-pink-300 rounded-full opacity-60"></div>
-            <div className="absolute top-8 right-1 w-4 h-3 bg-pink-300 rounded-full opacity-60"></div>
+            <div className="absolute bottom-8 left-4 w-8 h-4 bg-red-200 rounded-full opacity-60"></div>
+            <div className="absolute bottom-8 right-4 w-8 h-4 bg-red-200 rounded-full opacity-60"></div>
           </>
         )}
-        
-        {/* 코 */}
-        <div className="absolute top-9 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gradient-to-br from-amber-300 to-amber-400 rounded-full border border-amber-500 shadow-sm"></div>
-        
-        {/* 입 */}
-        {mood === 'happy' && (
-          <div className="absolute top-11 left-1/2 transform -translate-x-1/2 w-5 h-3 border-3 border-gray-700 border-t-0 rounded-b-2xl"></div>
-        )}
-        {mood === 'worried' && (
-          <div className="absolute top-12 left-1/2 transform -translate-x-1/2 w-4 h-2 border-3 border-gray-700 border-b-0 rounded-t-2xl"></div>
-        )}
-        {mood === 'excited' && (
-          <div className="absolute top-10 left-1/2 transform -translate-x-1/2 w-3 h-4 bg-gray-800 rounded-full"></div>
-        )}
-        
-        {/* 턱선 */}
-        <div className="absolute top-13 left-1/2 transform -translate-x-1/2 w-8 h-2 bg-gradient-to-b from-transparent to-amber-400/30 rounded-b-full"></div>
       </div>
-      
-      {/* 팔 (더 자연스러운 길이와 각도) */}
-      <div className="absolute top-16 left-1 w-4 h-10 bg-gradient-to-b from-amber-100 via-amber-200 to-amber-300 rounded-2xl border-2 border-amber-400 transform -rotate-25 shadow-md"></div>
-      <div className="absolute top-16 right-1 w-4 h-10 bg-gradient-to-b from-amber-100 via-amber-200 to-amber-300 rounded-2xl border-2 border-amber-400 transform rotate-25 shadow-md"></div>
-      
+
       {/* 손 */}
-      <div className="absolute top-23 left-0 w-3 h-3 bg-gradient-to-br from-amber-200 to-amber-300 rounded-full border border-amber-400 transform rotate-15"></div>
-      <div className="absolute top-23 right-0 w-3 h-3 bg-gradient-to-br from-amber-200 to-amber-300 rounded-full border border-amber-400 transform -rotate-15"></div>
+      <div className="absolute top-2/3 -left-2 w-6 h-6 bg-amber-200 rounded-full border-2 border-amber-300 shadow-md"></div>
+      <div className="absolute top-2/3 -right-2 w-6 h-6 bg-amber-200 rounded-full border-2 border-amber-300 shadow-md"></div>
       
       {/* 시집 */}
       {mood !== 'worried' && (
-        <div className="absolute top-20 -left-2 w-4 h-5 bg-gradient-to-br from-red-400 via-red-500 to-red-600 rounded-lg border-2 border-red-700 transform -rotate-15 shadow-lg">
-          <div className="absolute top-1 left-1 w-2 h-1 bg-yellow-200 rounded-sm"></div>
-          <div className="absolute inset-1 bg-gradient-to-br from-red-300 to-red-500 rounded-md"></div>
-          <div className="absolute top-0.5 left-0.5 text-xs text-white font-bold">詩</div>
+        <div className="absolute top-2/3 -left-8 w-10 h-12 bg-red-500 rounded-lg border-2 border-red-700 transform -rotate-15 shadow-lg">
+          <p className="absolute inset-0 text-center text-white font-bold text-lg pt-1">詩</p>
         </div>
-      )}
-      
-      {/* 별 효과 */}
-      {mood === 'excited' && (
-        <>
-          <div className="absolute -top-8 -left-4 text-yellow-400 text-xl animate-pulse">⭐</div>
-          <div className="absolute -top-6 -right-3 text-yellow-300 text-lg animate-pulse">✨</div>
-          <div className="absolute -top-10 left-1/2 text-yellow-200 text-lg animate-pulse">⭐</div>
-        </>
       )}
     </div>
   );
@@ -325,44 +266,28 @@ const DongjuHelpGame = () => {
 
   if (gameState === 'start') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-sky-200 via-green-100 to-green-200 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-b from-purple-200 via-indigo-200 to-sky-200 flex flex-col items-center justify-center p-4 relative overflow-hidden">
         {/* 배경 장식 */}
-        <div className="absolute top-10 left-10 text-6xl opacity-20 animate-bounce">🌸</div>
-        <div className="absolute top-20 right-16 text-4xl opacity-30 animate-pulse">🦋</div>
-        <div className="absolute bottom-20 left-20 text-5xl opacity-25 animate-bounce" style={{animationDelay: '1s'}}>🌻</div>
-        <div className="absolute bottom-10 right-10 text-3xl opacity-30 animate-pulse" style={{animationDelay: '2s'}}>🐝</div>
+        <div className="absolute top-10 left-10 text-6xl opacity-20 animate-pulse">🌌</div>
+        <div className="absolute top-20 right-16 text-4xl opacity-30 animate-pulse" style={{animationDelay: '1s'}}>✨</div>
+        <div className="absolute bottom-20 left-20 text-5xl opacity-25 animate-pulse" style={{animationDelay: '2s'}}>🌟</div>
+        <div className="absolute bottom-10 right-10 text-3xl opacity-30 animate-pulse" style={{animationDelay: '3s'}}>💫</div>
         
         <div className="text-center relative z-10">
           <div className="mb-8">
-            <div className="mb-6 animate-bounce">
-              <DongjuCharacter mood="happy" size="xlarge" />
-            </div>
-            <h1 className="text-5xl font-bold text-green-800 mb-4 drop-shadow-lg">동주를 도와줘!</h1>
-            <p className="text-xl text-green-700 font-medium">윤동주 시인이 시냇물을 건널 수 있도록 도와주세요</p>
+            <h1 className="text-5xl font-bold text-gray-800 mb-4 drop-shadow-lg">동주를 도와줘!</h1>
+            <p className="text-xl text-gray-700 font-medium">시와 함께 떠나는 아름다운 여정</p>
           </div>
           
-          <div className="bg-white/90 rounded-2xl p-8 mb-8 max-w-md shadow-2xl border-4 border-white">
+          <div className="bg-white/90 rounded-2xl p-8 mb-8 max-w-lg shadow-2xl border-4 border-white">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4 flex items-center justify-center gap-2">
-              🎮 게임 방법
+              📜 이야기
             </h2>
-            <ul className="text-sm text-gray-700 text-left space-y-3">
-              <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">•</span>
-                <span>시 「서시」의 구절을 올바른 순서대로 배치하세요</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">•</span>
-                <span>카드를 드래그해서 3D 돌다리에 놓으세요</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">•</span>
-                <span>제한 시간: 60초</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">•</span>
-                <span>성공하면 특별한 선물이 기다려요! 🎁</span>
-              </li>
-            </ul>
+            <div className="text-base text-gray-700 text-center leading-relaxed space-y-3">
+              <p>산책을 나선 동주 시인, 시냇물을 건너려는데... <span className="font-bold text-red-500">허거덩!</span> 돌다리가 사라졌어요.</p>
+              <p>동주 시인이 무사히 내를 건너서 <b>'내숲 도서관'</b>으로 갈 수 있도록 시의 순서대로 돌다리를 놓아주세요.</p>
+              <p>밤하늘의 별과 바람을 사랑했던 동주 시인에게, 여러분의 따뜻한 마음이 깃든 돌다리가 필요해요.</p>
+            </div>
           </div>
 
           <button
@@ -370,7 +295,7 @@ const DongjuHelpGame = () => {
             className="bg-gradient-to-r from-green-500 via-green-600 to-green-700 hover:from-green-600 hover:via-green-700 hover:to-green-800 text-white font-bold py-5 px-10 rounded-full text-2xl flex items-center gap-3 mx-auto transition-all duration-300 transform hover:scale-105 shadow-2xl border-4 border-green-800"
           >
             <Play className="w-8 h-8" />
-            게임 시작
+            본격 게임 시작
           </button>
         </div>
       </div>
@@ -414,8 +339,7 @@ const DongjuHelpGame = () => {
                 </div>
                 <div className="absolute -bottom-2 left-8 w-4 h-4 bg-white border-r-3 border-b-3 border-white transform rotate-45"></div>
               </div>
-            </div>
-            
+          
             {/* 3D 시냇물과 돌다리 */}
             <div className="flex-1 relative">
               <div className="relative bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 rounded-3xl p-6 shadow-2xl border-4 border-blue-700 overflow-hidden">
@@ -597,7 +521,7 @@ const DongjuHelpGame = () => {
                     <div className="animate-bounce mb-2">
                       <DongjuCharacter mood="excited" size="large" />
                     </div>
-                    <p className="text-lg text-green-800 font-bold">숲속 도서관 도착! ✨</p>
+                    <p className="text-lg text-green-800 font-bold">내숲 도서관 도착! ✨</p>
                     <div className="mt-2 flex justify-center gap-2">
                       <span className="text-sm">📚</span>
                       <span className="text-sm">🖋️</span>
@@ -611,7 +535,7 @@ const DongjuHelpGame = () => {
               <div className="mt-6 bg-white/90 rounded-2xl p-4 border-2 border-white/70">
                 <p className="text-base text-green-800 font-medium italic leading-relaxed">
                   "시의 힘으로 시냇물을 건너<br/>
-                  마침내 숲속 도서관에 도착했구나!<br/>
+                  마침내 내숲 도서관에 도착했구나!<br/>
                   이곳에서 더 많은 시를 쓸 수 있겠네."
                 </p>
               </div>
