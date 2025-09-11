@@ -1,293 +1,734 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>윤동주 시인 퀴즈 이벤트</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #00FF99; /* 이미지 배경색과 유사하게 설정 */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow: hidden; /* 폭죽 효과를 위해 오버플로우 숨김 */
-        }
-        .container {
-            background-color: #fff;
-            border-radius: 1.5rem; /* 둥근 모서리 */
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 500px;
-            padding: 2rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            border: 5px solid #000; /* 검은색 테두리 추가 */
-        }
-        .header {
-            background-color: #000;
-            color: #fff;
-            padding: 0.5rem 1rem;
-            border-radius: 9999px; /* 완전한 둥근 모서리 */
-            display: inline-block;
-            margin-bottom: 1.5rem;
-            font-weight: bold;
-            font-size: 1.25rem;
-            transform: rotate(-5deg); /* 이미지 헤더와 유사하게 기울기 */
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            z-index: 10;
-        }
-        .question-box {
-            border: 5px solid #000;
-            padding: 2rem;
-            border-radius: 1rem;
-            margin-bottom: 2rem;
-            position: relative;
-            background-color: #fff;
-        }
-        .hint-box {
-            background-color: #FF0000; /* 힌트 박스 색상 */
-            color: #fff;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            display: inline-block;
-            margin-bottom: 1rem;
-            font-weight: bold;
-            transform: rotate(3deg); /* 이미지 힌트와 유사하게 기울기 */
-            border: 2px solid #000;
-        }
-        .question-text {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 1.5rem;
-            line-height: 1.4;
-        }
-        .input-field {
-            border: 3px solid #000;
-            padding: 0.75rem 1.25rem;
-            border-radius: 0.75rem;
-            width: calc(100% - 6px); /* 테두리 두께 고려 */
-            font-size: 1.25rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            box-sizing: border-box;
-        }
-        .submit-button {
-            background-color: #FF0000; /* 제출 버튼 색상 */
-            color: #fff;
-            padding: 1rem 2rem;
-            border-radius: 1rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            border: 3px solid #000;
-            box-shadow: 5px 5px 0px #000; /* 그림자 효과 */
-            display: inline-block;
-            text-decoration: none; /* 링크 스타일 제거 */
-        }
-        .submit-button:hover {
-            background-color: #CC0000;
-        }
-        .result-message {
-            font-size: 1.75rem;
-            font-weight: bold;
-            margin-top: 2rem;
-            margin-bottom: 1.5rem;
-        }
-        .product-info {
-            font-size: 1.25rem;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-        }
-        .retry-button {
-            background-color: #000; /* 재도전 버튼 색상 */
-            color: #fff;
-            padding: 1rem 2rem;
-            border-radius: 1rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            border: 3px solid #000;
-            box-shadow: 5px 5px 0px #000; /* 그림자 효과 */
-            display: inline-block;
-        }
-        .retry-button:hover {
-            background-color: #333;
-        }
-        .hidden {
-            display: none;
-        }
-        /* 상단 및 하단 문구 스타일 */
-        .top-text, .bottom-text {
-            font-size: 0.8rem;
-            color: #555;
-            margin-bottom: 1rem;
-        }
-        .bottom-text {
-            margin-top: 1rem;
-            margin-bottom: 0;
-        }
-        /* Fireworks styles */
-        .fireworks-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-        }
-        .firework {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: #fff;
-            border-radius: 50%;
-            opacity: 0;
-            animation: firework-burst 1s forwards;
-        }
-        @keyframes firework-burst {
-            0% {
-                transform: scale(0);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(2);
-                opacity: 0;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- 상단 문구 추가 -->
-        <p class="top-text">2025년 시문학자료실 8-10월 북큐레이션 연계 퀴즈 이벤트</p>
-        <div class="header">문제</div>
-        <div id="quiz-screen">
-            <div class="question-box">
-                <div class="hint-box">힌트: ㅂㄲㄹㅇ</div>
-                <p class="question-text">
-                    윤동주 시인의 시적 세계관을<br>
-                    관통하는 정서는 '0000'이다.
-                </p>
-                <input type="text" id="answer-input" class="input-field" placeholder="정답을 입력하세요">
-                <button id="submit-button" class="submit-button">정답 확인 GO!</button>
-            </div>
-        </div>
+import React, { useState, useEffect } from 'react';
+import { Clock, RefreshCw, Play, Home, Gift } from 'lucide-react';
 
-        <div id="correct-screen" class="hidden">
-            <div class="result-message text-green-600">🎉 정답입니다! 축하합니다! 🎉</div>
-            <p class="product-info">
-                상품 수령 방법:<br>
-                정답을 확인하신 후, '내를 건너서 숲으로 도서관' 2층 시문학자료실로 오셔서 직원에게 해당화면을 보여준 후 상품을 수령해 가세요!
-            </p>
-            <p id="stock-info" class="text-lg font-semibold mt-4"></p>
-        </div>
+// 윤동주 시 「서시」의 구절들
+const POEM_LINES = [
+  "죽는 날까지 하늘을 우러러",
+  "한 점 부끄럼이 없기를",
+  "잎새에 이는 바람에도", 
+  "나는 괴로워했다",
+  "별을 노래하는 마음으로",
+  "모든 죽어가는 것을 사랑해야지",
+  "그리고 나에게 주어진 길을",
+  "걸어가야겠다",
+  "오늘 밤에도 별이 바람에 스치운다"
+];
 
-        <div id="incorrect-screen" class="hidden">
-            <div class="result-message text-red-600">아쉽지만 오답입니다. 다시 한번 도전해 볼까요?</div>
-            <button id="retry-button" class="retry-button">재도전!</button>
+// 배열 섞기 함수
+const shuffleArray = (array) => {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+};
+
+// 더 사람스러운 윤동주 캐릭터 컴포넌트
+const DongjuCharacter = ({ mood = 'happy', size = 'medium' }) => {
+  const sizeMap = {
+    small: { w: 20, h: 32 },
+    medium: { w: 24, h: 36 },
+    large: { w: 28, h: 40 },
+    xlarge: { w: 32, h: 44 }
+  };
+
+  const { w, h } = sizeMap[size];
+
+  return (
+    <div className={`relative w-${w} h-${h} mx-auto`}>
+      {/* 그림자 */}
+      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-4 bg-black/20 rounded-full blur-sm"></div>
+      
+      {/* 다리 (더 길게) */}
+      <div className="absolute top-24 left-1/2 transform -translate-x-1/2 translate-x-2 w-4 h-12 bg-gradient-to-b from-gray-600 via-gray-700 to-gray-800 rounded-full border-2 border-gray-500"></div>
+      <div className="absolute top-24 left-1/2 transform -translate-x-1/2 -translate-x-2 w-4 h-12 bg-gradient-to-b from-gray-600 via-gray-700 to-gray-800 rounded-full border-2 border-gray-500"></div>
+      
+      {/* 신발 */}
+      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 translate-x-2 w-6 h-3 bg-gradient-to-br from-gray-900 to-black rounded-full border border-gray-700 shadow-lg"></div>
+      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 -translate-x-2 w-6 h-3 bg-gradient-to-br from-gray-900 to-black rounded-full border border-gray-700 shadow-lg"></div>
+      
+      {/* 몸통 (더 인간적인 비율로) */}
+      <div className="absolute top-14 left-1/2 transform -translate-x-1/2 w-16 h-14 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 rounded-3xl border-3 border-blue-700 shadow-lg">
+        {/* 셔츠 디테일 */}
+        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-10 h-8 bg-white/25 rounded-xl"></div>
+        <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-1.5 h-6 bg-white rounded-full"></div>
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-white rounded-full"></div>
+        <div className="absolute top-6.5 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-white rounded-full"></div>
+        
+        {/* 셔츠 주름 */}
+        <div className="absolute top-2 left-3 w-8 h-0.5 bg-blue-600/50 rounded-full"></div>
+        <div className="absolute top-4 right-3 w-6 h-0.5 bg-blue-600/50 rounded-full"></div>
+      </div>
+      
+      {/* 목 */}
+      <div className="absolute top-12 left-1/2 transform -translate-x-1/2 w-6 h-4 bg-gradient-to-b from-amber-200 to-amber-300 rounded-lg border border-amber-400"></div>
+      
+      {/* 머리 (더 자연스러운 크기와 형태) */}
+      <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-18 h-18 bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300 rounded-3xl border-3 border-amber-400 shadow-lg" style={{borderRadius: '50% 50% 45% 45%'}}>
+        
+        {/* 학사모 */}
+        <div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
+          {/* 학사모 모자 (더 사실적으로) */}
+          <div className="w-14 h-10 bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-t-2xl border-2 border-gray-700 shadow-xl relative">
+            <div className="absolute inset-1 bg-gradient-to-br from-gray-700 to-gray-800 rounded-t-xl"></div>
+            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gray-600 rounded-full"></div>
+          </div>
+          {/* 학사모 모판 */}
+          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-20 h-3 bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-full border-2 border-gray-700 shadow-xl">
+            <div className="absolute inset-1 bg-gradient-to-br from-gray-700 to-gray-800 rounded-full"></div>
+          </div>
+          {/* 학사모 술 */}
+          <div className="absolute -top-2 right-0 w-1 h-6 bg-yellow-500 rounded-full shadow-md"></div>
+          <div className="absolute top-4 right-0 w-3 h-3 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-sm border border-yellow-700 transform rotate-45 shadow-md"></div>
         </div>
         
-        <!-- 하단 문구 추가 -->
-        <p class="bottom-text">2025년 문학상주작가 지원사업</p>
+        {/* 머리카락 (더 자연스럽게) */}
+        <div className="absolute top-0 left-2 w-3 h-6 bg-gradient-to-b from-amber-800 to-amber-900 rounded-2xl"></div>
+        <div className="absolute top-0 right-2 w-3 h-6 bg-gradient-to-b from-amber-800 to-amber-900 rounded-2xl"></div>
+        <div className="absolute top-1 left-1/2 transform -translate-x-1/2 w-8 h-4 bg-gradient-to-b from-amber-800 to-amber-900 rounded-t-full"></div>
+        
+        {/* 이마 */}
+        <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-12 h-3 bg-gradient-to-b from-amber-150 to-amber-200 rounded-t-xl"></div>
+        
+        {/* 눈썹 */}
+        <div className="absolute top-5 left-4 w-3 h-1 bg-amber-800 rounded-full transform -rotate-12"></div>
+        <div className="absolute top-5 right-4 w-3 h-1 bg-amber-800 rounded-full transform rotate-12"></div>
+        
+        {/* 눈 (더 사실적으로) */}
+        <div className="absolute top-6 left-4 w-4 h-4 bg-white rounded-full border-2 border-gray-300 shadow-inner">
+          <div className="absolute top-1 left-1 w-3 h-3 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full">
+            <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-white rounded-full"></div>
+            <div className="absolute top-1 right-1 w-0.5 h-0.5 bg-white rounded-full"></div>
+          </div>
+        </div>
+        <div className="absolute top-6 right-4 w-4 h-4 bg-white rounded-full border-2 border-gray-300 shadow-inner">
+          <div className="absolute top-1 right-1 w-3 h-3 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full">
+            <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-white rounded-full"></div>
+            <div className="absolute top-1 right-1 w-0.5 h-0.5 bg-white rounded-full"></div>
+          </div>
+        </div>
+        
+        {/* 뺨 홍조 */}
+        {mood === 'happy' && (
+          <>
+            <div className="absolute top-8 left-1 w-4 h-3 bg-pink-300 rounded-full opacity-60"></div>
+            <div className="absolute top-8 right-1 w-4 h-3 bg-pink-300 rounded-full opacity-60"></div>
+          </>
+        )}
+        
+        {/* 코 */}
+        <div className="absolute top-9 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gradient-to-br from-amber-300 to-amber-400 rounded-full border border-amber-500 shadow-sm"></div>
+        
+        {/* 입 */}
+        {mood === 'happy' && (
+          <div className="absolute top-11 left-1/2 transform -translate-x-1/2 w-5 h-3 border-3 border-gray-700 border-t-0 rounded-b-2xl"></div>
+        )}
+        {mood === 'worried' && (
+          <div className="absolute top-12 left-1/2 transform -translate-x-1/2 w-4 h-2 border-3 border-gray-700 border-b-0 rounded-t-2xl"></div>
+        )}
+        {mood === 'excited' && (
+          <div className="absolute top-10 left-1/2 transform -translate-x-1/2 w-3 h-4 bg-gray-800 rounded-full"></div>
+        )}
+        
+        {/* 턱선 */}
+        <div className="absolute top-13 left-1/2 transform -translate-x-1/2 w-8 h-2 bg-gradient-to-b from-transparent to-amber-400/30 rounded-b-full"></div>
+      </div>
+      
+      {/* 팔 (더 자연스러운 길이와 각도) */}
+      <div className="absolute top-16 left-1 w-4 h-10 bg-gradient-to-b from-amber-100 via-amber-200 to-amber-300 rounded-2xl border-2 border-amber-400 transform -rotate-25 shadow-md"></div>
+      <div className="absolute top-16 right-1 w-4 h-10 bg-gradient-to-b from-amber-100 via-amber-200 to-amber-300 rounded-2xl border-2 border-amber-400 transform rotate-25 shadow-md"></div>
+      
+      {/* 손 */}
+      <div className="absolute top-23 left-0 w-3 h-3 bg-gradient-to-br from-amber-200 to-amber-300 rounded-full border border-amber-400 transform rotate-15"></div>
+      <div className="absolute top-23 right-0 w-3 h-3 bg-gradient-to-br from-amber-200 to-amber-300 rounded-full border border-amber-400 transform -rotate-15"></div>
+      
+      {/* 시집 */}
+      {mood !== 'worried' && (
+        <div className="absolute top-20 -left-2 w-4 h-5 bg-gradient-to-br from-red-400 via-red-500 to-red-600 rounded-lg border-2 border-red-700 transform -rotate-15 shadow-lg">
+          <div className="absolute top-1 left-1 w-2 h-1 bg-yellow-200 rounded-sm"></div>
+          <div className="absolute inset-1 bg-gradient-to-br from-red-300 to-red-500 rounded-md"></div>
+          <div className="absolute top-0.5 left-0.5 text-xs text-white font-bold">詩</div>
+        </div>
+      )}
+      
+      {/* 별 효과 */}
+      {mood === 'excited' && (
+        <>
+          <div className="absolute -top-8 -left-4 text-yellow-400 text-xl animate-pulse">⭐</div>
+          <div className="absolute -top-6 -right-3 text-yellow-300 text-lg animate-pulse">✨</div>
+          <div className="absolute -top-10 left-1/2 text-yellow-200 text-lg animate-pulse">⭐</div>
+        </>
+      )}
     </div>
+  );
+};
 
-    <div id="fireworks-container" class="fireworks-container hidden"></div>
+// 3D 돌다리 컴포넌트
+const SteppingStone = ({ card, index, onDrop, onDragOver, showShake }) => {
+  return (
+    <div className="relative mb-2">
+      <div
+        onDragOver={onDragOver}
+        onDrop={(e) => onDrop(e, index)}
+        className={`relative transition-all duration-300 ${
+          card ? 'transform scale-100' : 'transform scale-95 hover:scale-100'
+        } ${showShake ? 'animate-bounce' : ''}`}
+      >
+        {/* 돌의 그림자 */}
+        <div className="absolute top-3 left-2 w-20 h-16 bg-black/20 rounded-3xl blur-lg transform rotate-1"></div>
+        
+        {/* 메인 돌 */}
+        <div className={`
+          relative w-24 h-14 rounded-3xl border-4 transition-all duration-300 shadow-xl transform
+          ${card 
+            ? 'bg-gradient-to-br from-gray-200 via-gray-300 to-gray-500 border-gray-600 translate-y-0' 
+            : 'bg-gradient-to-br from-gray-300 via-gray-400 to-gray-600 border-gray-700 border-dashed translate-y-1 hover:translate-y-0'
+          }
+        `}>
+          {/* 돌의 3D 효과 */}
+          <div className="absolute inset-1 rounded-2xl bg-gradient-to-br from-white/40 via-transparent to-black/20"></div>
+          
+          {/* 돌의 질감 */}
+          <div className="absolute top-2 left-3 w-2 h-2 bg-gray-400 rounded-full opacity-60"></div>
+          <div className="absolute top-3 right-4 w-1 h-1 bg-gray-500 rounded-full opacity-50"></div>
+          <div className="absolute bottom-2 left-5 w-1 h-1 bg-gray-600 rounded-full opacity-40"></div>
+          <div className="absolute bottom-3 right-2 w-1.5 h-1.5 bg-gray-400 rounded-full opacity-50"></div>
+          
+          {/* 돌 번호 */}
+          <div className="absolute -top-3 -left-3 w-8 h-8 bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 border-3 border-yellow-700 rounded-full flex items-center justify-center shadow-lg">
+            <span className="text-sm font-bold text-yellow-900">{index + 1}</span>
+            <div className="absolute inset-1 bg-gradient-to-br from-yellow-300 to-transparent rounded-full"></div>
+          </div>
+          
+          {/* 시 구절 텍스트 */}
+          <div className="relative z-10 h-full flex items-center justify-center p-2">
+            {card ? (
+              <p className="text-center font-bold text-gray-800 text-xs leading-tight drop-shadow-sm">
+                {card.text}
+              </p>
+            ) : (
+              <p className="text-center text-gray-600 text-xs opacity-80 font-medium">
+                {index + 1}번째<br/>시 구절
+              </p>
+            )}
+          </div>
+          
+          {/* 돌 윗면 하이라이트 */}
+          <div className="absolute top-0 left-2 right-2 h-2 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-t-2xl"></div>
+        </div>
+        
+        {/* 물에 비치는 반사 효과 */}
+        {!card && (
+          <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
+            <div className="w-16 h-3 bg-blue-300 rounded-full opacity-30 animate-pulse blur-sm"></div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
-    <script>
-        const answerInput = document.getElementById('answer-input');
-        const submitButton = document.getElementById('submit-button');
-        const retryButton = document.getElementById('retry-button');
-        const quizScreen = document.getElementById('quiz-screen');
-        const correctScreen = document.getElementById('correct-screen');
-        const incorrectScreen = document.getElementById('incorrect-screen');
-        const fireworksContainer = document.getElementById('fireworks-container');
-        const stockInfoElement = document.getElementById('stock-info');
+// 3D 시냇물 효과
+const StreamEffect = () => {
+  return (
+    <div className="absolute inset-0 overflow-hidden rounded-2xl">
+      {/* 물결 효과 */}
+      <div className="absolute inset-0">
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-32 h-1 bg-white/20 rounded-full animate-pulse"
+            style={{
+              top: `${10 + i * 12}%`,
+              left: `${Math.sin(i) * 20 + 10}%`,
+              animationDelay: `${i * 0.5}s`,
+              animationDuration: '3s'
+            }}
+          ></div>
+        ))}
+      </div>
+      
+      {/* 물방울 효과 */}
+      <div className="absolute top-4 left-8 w-2 h-2 bg-white/40 rounded-full animate-ping"></div>
+      <div className="absolute top-12 right-12 w-1 h-1 bg-white/30 rounded-full animate-ping" style={{animationDelay: '1s'}}></div>
+      <div className="absolute bottom-8 left-16 w-1 h-1 bg-white/35 rounded-full animate-ping" style={{animationDelay: '2s'}}></div>
+    </div>
+  );
+};
 
-        const correctAnswer = '부끄러움';
-        // --- 재고 수량을 여기에 수동으로 입력해주세요! ---
-        // 구글 시트의 '남은 수량'을 확인하여 이 값을 직접 업데이트해야 합니다.
-        let currentStock = 113; // 예시: 현재 남은 상품 수량 (수동 업데이트 필요)
-        // ----------------------------------------------------
+const DongjuHelpGame = () => {
+  const [gameState, setGameState] = useState('start');
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [placedCards, setPlacedCards] = useState([]);
+  const [availableCards, setAvailableCards] = useState([]);
+  const [draggedCard, setDraggedCard] = useState(null);
+  const [score, setScore] = useState(0);
+  const [giftCount, setGiftCount] = useState(90);
+  const [showShakeAnimation, setShowShakeAnimation] = useState(false);
 
-        // 이벤트 리스너
-        submitButton.addEventListener('click', () => {
-            const userAnswer = answerInput.value.trim();
-            if (userAnswer === correctAnswer) {
-                showCorrectScreen();
-                launchFireworks();
-                updateStockDisplay();
-            } else {
-                showIncorrectScreen();
-            }
-        });
+  const startGame = () => {
+    setGameState('playing');
+    setTimeLeft(60);
+    setPlacedCards(Array(POEM_LINES.length).fill(null));
+    setAvailableCards(shuffleArray(POEM_LINES.map((line, index) => ({ id: index, text: line }))));
+    setScore(0);
+  };
 
-        retryButton.addEventListener('click', () => {
-            resetQuiz();
-        });
+  const goHome = () => {
+    setGameState('start');
+  };
 
-        // 화면 전환 함수
-        function showCorrectScreen() {
-            quizScreen.classList.add('hidden');
-            incorrectScreen.classList.add('hidden');
-            correctScreen.classList.remove('hidden');
-        }
+  useEffect(() => {
+    if (gameState === 'playing' && timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (timeLeft === 0 && gameState === 'playing') {
+      setGameState('failure');
+    }
+  }, [gameState, timeLeft]);
 
-        function showIncorrectScreen() {
-            quizScreen.classList.add('hidden');
-            correctScreen.classList.add('hidden');
-            incorrectScreen.classList.remove('hidden');
-        }
+  useEffect(() => {
+    if (placedCards.every(card => card !== null)) {
+      setGameState('success');
+      setScore(Math.max(0, timeLeft * 10));
+    }
+  }, [placedCards, timeLeft]);
 
-        function resetQuiz() {
-            answerInput.value = '';
-            quizScreen.classList.remove('hidden');
-            correctScreen.classList.add('hidden');
-            incorrectScreen.classList.add('hidden');
-            fireworksContainer.classList.add('hidden');
-            fireworksContainer.innerHTML = ''; // 폭죽 제거
-        }
+  const handleDragStart = (e, card) => {
+    setDraggedCard(card);
+    e.dataTransfer.effectAllowed = 'move';
+  };
 
-        // 재고 표시 함수
-        function updateStockDisplay() {
-            if (currentStock > 0) {
-                stockInfoElement.textContent = `현재 남은 상품 수량: ${currentStock}개`;
-            } else {
-                stockInfoElement.textContent = '아쉽게도 상품이 모두 소진되었습니다.';
-                stockInfoElement.classList.add('text-red-500');
-            }
-        }
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
 
-        // 폭죽 효과 함수
-        function launchFireworks() {
-            fireworksContainer.classList.remove('hidden');
-            for (let i = 0; i < 30; i++) {
-                createFirework();
-            }
-        }
+  const handleDrop = (e, slotIndex) => {
+    e.preventDefault();
+    if (draggedCard) {
+      if (draggedCard.id === slotIndex) {
+        const newPlacedCards = [...placedCards];
+        newPlacedCards[slotIndex] = draggedCard;
+        setPlacedCards(newPlacedCards);
+        
+        const newAvailableCards = availableCards.filter(card => card.id !== draggedCard.id);
+        setAvailableCards(newAvailableCards);
+      } else {
+        setShowShakeAnimation(true);
+        setTimeout(() => setShowShakeAnimation(false), 600);
+      }
+      setDraggedCard(null);
+    }
+  };
 
-        function createFirework() {
-            const firework = document.createElement('div');
-            firework.classList.add('firework');
-            firework.style.left = Math.random() * 100 + 'vw';
-            firework.style.top = Math.random() * 100 + 'vh';
-            firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
-            fireworksContainer.appendChild(firework);
+  if (gameState === 'start') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-sky-200 via-green-100 to-green-200 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        {/* 배경 장식 */}
+        <div className="absolute top-10 left-10 text-6xl opacity-20 animate-bounce">🌸</div>
+        <div className="absolute top-20 right-16 text-4xl opacity-30 animate-pulse">🦋</div>
+        <div className="absolute bottom-20 left-20 text-5xl opacity-25 animate-bounce" style={{animationDelay: '1s'}}>🌻</div>
+        <div className="absolute bottom-10 right-10 text-3xl opacity-30 animate-pulse" style={{animationDelay: '2s'}}>🐝</div>
+        
+        <div className="text-center relative z-10">
+          <div className="mb-8">
+            <div className="mb-6 animate-bounce">
+              <DongjuCharacter mood="happy" size="xlarge" />
+            </div>
+            <h1 className="text-5xl font-bold text-green-800 mb-4 drop-shadow-lg">동주를 도와줘!</h1>
+            <p className="text-xl text-green-700 font-medium">윤동주 시인이 시냇물을 건널 수 있도록 도와주세요</p>
+          </div>
+          
+          <div className="bg-white/90 rounded-2xl p-8 mb-8 max-w-md shadow-2xl border-4 border-white">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4 flex items-center justify-center gap-2">
+              🎮 게임 방법
+            </h2>
+            <ul className="text-sm text-gray-700 text-left space-y-3">
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 font-bold">•</span>
+                <span>시 「서시」의 구절을 올바른 순서대로 배치하세요</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 font-bold">•</span>
+                <span>카드를 드래그해서 3D 돌다리에 놓으세요</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 font-bold">•</span>
+                <span>제한 시간: 60초</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 font-bold">•</span>
+                <span>성공하면 특별한 선물이 기다려요! 🎁</span>
+              </li>
+            </ul>
+          </div>
 
-            firework.addEventListener('animationend', () => {
-                firework.remove();
-            });
-        }
-    </script>
-</body>
-</html>
+          <button
+            onClick={startGame}
+            className="bg-gradient-to-r from-green-500 via-green-600 to-green-700 hover:from-green-600 hover:via-green-700 hover:to-green-800 text-white font-bold py-5 px-10 rounded-full text-2xl flex items-center gap-3 mx-auto transition-all duration-300 transform hover:scale-105 shadow-2xl border-4 border-green-800"
+          >
+            <Play className="w-8 h-8" />
+            게임 시작
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (gameState === 'playing') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-sky-200 via-green-100 to-green-200 p-4">
+        <div className="flex justify-between items-center mb-6">
+          <button onClick={goHome} className="flex items-center gap-2 bg-white/90 px-4 py-2 rounded-xl hover:bg-white transition-colors shadow-lg border-2 border-white">
+            <Home className="w-4 h-4" />
+            홈
+          </button>
+          
+          <div className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-xl shadow-lg border-2 ${
+            timeLeft <= 10 ? 'bg-red-100 text-red-800 border-red-300 animate-pulse' : 'bg-white/90 text-gray-800 border-white'
+          }`}>
+            <Clock className="w-6 h-6" />
+            {timeLeft}초
+          </div>
+        </div>
+
+        <div className="relative bg-gradient-to-br from-green-300 via-green-400 to-green-500 rounded-3xl p-8 mb-8 overflow-hidden shadow-2xl border-4 border-green-600">
+          {/* 배경 장식 */}
+          <div className="absolute top-4 left-8 text-4xl opacity-40">🌲</div>
+          <div className="absolute top-2 right-12 text-3xl opacity-50">🌳</div>
+          <div className="absolute top-6 left-1/3 text-2xl opacity-30">🌿</div>
+          <div className="absolute top-2 left-1/4 text-2xl opacity-50 animate-pulse">☁️</div>
+          <div className="absolute top-4 right-1/4 text-xl opacity-40 animate-pulse">☁️</div>
+          
+          <div className="flex items-start gap-6">
+            {/* 윤동주 캐릭터 */}
+            <div className="flex-shrink-0">
+                  <DongjuCharacter mood={showShakeAnimation ? 'worried' : 'happy'} size="medium" />
+              </div>
+              
+              <div className="relative bg-white/95 rounded-2xl p-3 mt-4 shadow-lg border-3 border-white max-w-36">
+                <div className="text-sm text-gray-700 font-medium text-center">
+                  {showShakeAnimation ? "앗! 돌이 맞지 않아요! 😵" : "올바른 순서로 놓아주세요~ 📝"}
+                </div>
+                <div className="absolute -bottom-2 left-8 w-4 h-4 bg-white border-r-3 border-b-3 border-white transform rotate-45"></div>
+              </div>
+            </div>
+            
+            {/* 3D 시냇물과 돌다리 */}
+            <div className="flex-1 relative">
+              <div className="relative bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 rounded-3xl p-6 shadow-2xl border-4 border-blue-700 overflow-hidden">
+                <StreamEffect />
+                
+                <h3 className="text-center font-bold text-white mb-6 text-2xl drop-shadow-lg flex items-center justify-center gap-2">
+                  🌉 돌다리를 완성하세요 🌉
+                </h3>
+                
+                <div className="space-y-3 relative z-10">
+                  {placedCards.map((card, index) => (
+                    <div key={index} className="flex justify-center">
+                      <SteppingStone 
+                        card={card}
+                        index={index}
+                        onDrop={handleDrop}
+                        onDragOver={handleDragOver}
+                        showShake={showShakeAnimation}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            {/* 목적지 */}
+            <div className="flex-shrink-0 text-center">
+              <div className="text-6xl mb-4">🏠</div>
+              <div className="text-2xl mb-2">🌲🌳</div>
+              <p className="text-sm text-green-800 font-bold bg-white/80 rounded-lg px-3 py-2">목적지</p>
+              <p className="text-xs text-green-700 mt-1">"집으로~"</p>
+            </div>
+          </div>
+        </div>
+
+        {/* 카드 선택 영역 */}
+        <div className="bg-white/95 rounded-3xl p-6 shadow-2xl border-4 border-white">
+          <h3 className="text-center font-bold text-gray-800 mb-6 flex items-center justify-center gap-3 text-xl">
+            <span className="text-2xl">📜</span>
+            시 구절 카드를 드래그하세요
+            <span className="text-2xl">📜</span>
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {availableCards.map((card) => (
+              <div
+                key={card.id}
+                draggable
+                onDragStart={(e) => handleDragStart(e, card)}
+                className="group relative bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300 hover:from-amber-200 hover:via-amber-300 hover:to-amber-400 border-4 border-amber-500 rounded-2xl p-4 cursor-move transition-all duration-300 transform hover:scale-105 hover:rotate-1 shadow-lg hover:shadow-2xl"
+              >
+                {/* 카드 장식 */}
+                <div className="absolute top-2 left-2 w-3 h-3 bg-amber-600 rounded-full opacity-60"></div>
+                <div className="absolute top-2 right-2 w-3 h-3 bg-amber-600 rounded-full opacity-60"></div>
+                <div className="absolute bottom-2 left-2 w-3 h-3 bg-amber-600 rounded-full opacity-60"></div>
+                <div className="absolute bottom-2 right-2 w-3 h-3 bg-amber-600 rounded-full opacity-60"></div>
+                
+                {/* 3D 효과 */}
+                <div className="absolute inset-1 bg-gradient-to-br from-white/50 via-transparent to-black/20 rounded-xl"></div>
+                
+                <p className="text-sm text-center text-gray-800 font-semibold leading-tight relative z-10">
+                  {card.text}
+                </p>
+                
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-200/0 via-yellow-300/0 to-yellow-200/0 group-hover:from-yellow-200/30 group-hover:via-yellow-300/40 group-hover:to-yellow-200/30 rounded-2xl transition-all duration-300"></div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600 bg-gray-100 rounded-xl px-4 py-2 inline-block shadow-md">
+              💡 카드를 3D 돌다리 위의 올바른 순서로 드래그해보세요!
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (gameState === 'success') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-emerald-300 via-green-400 to-green-500 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        {/* 숲속 배경 */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* 큰 나무들 */}
+          <div className="absolute bottom-0 left-10 w-20 h-40 bg-gradient-to-t from-amber-800 via-amber-700 to-amber-600 rounded-t-full opacity-80"></div>
+          <div className="absolute bottom-0 right-12 w-24 h-48 bg-gradient-to-t from-amber-900 via-amber-800 to-amber-700 rounded-t-full opacity-70"></div>
+          <div className="absolute bottom-0 left-1/3 w-18 h-36 bg-gradient-to-t from-amber-800 via-amber-700 to-amber-600 rounded-t-full opacity-60"></div>
+          <div className="absolute bottom-0 right-1/3 w-16 h-32 bg-gradient-to-t from-amber-900 via-amber-800 to-amber-700 rounded-t-full opacity-75"></div>
+          
+          {/* 나뭇잎들 */}
+          <div className="absolute top-5 left-8 w-32 h-32 bg-gradient-to-br from-green-400 via-green-500 to-green-600 rounded-full opacity-90 animate-pulse"></div>
+          <div className="absolute top-8 right-8 w-40 h-40 bg-gradient-to-br from-green-300 via-green-400 to-green-500 rounded-full opacity-80 animate-pulse" style={{animationDelay: '1s'}}></div>
+          <div className="absolute top-12 left-1/3 w-28 h-28 bg-gradient-to-br from-green-500 via-green-600 to-green-700 rounded-full opacity-70 animate-pulse" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-6 right-1/3 w-24 h-24 bg-gradient-to-br from-green-400 via-green-500 to-green-600 rounded-full opacity-85 animate-pulse" style={{animationDelay: '0.5s'}}></div>
+          
+          {/* 작은 나뭇가지들 */}
+          <div className="absolute top-20 left-16 w-3 h-12 bg-amber-700 rounded-full transform rotate-45 opacity-60"></div>
+          <div className="absolute top-24 right-20 w-2 h-8 bg-amber-800 rounded-full transform -rotate-30 opacity-50"></div>
+          
+          {/* 떨어지는 나뭇잎들 */}
+          {[...Array(15)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute animate-bounce opacity-60"
+              style={{
+                top: `${Math.random() * 60}%`,
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${3 + Math.random() * 2}s`,
+                fontSize: `${12 + Math.random() * 8}px`
+              }}
+            >
+              {['🍃', '🍂', '🌿'][Math.floor(Math.random() * 3)]}
+            </div>
+          ))}
+          
+          {/* 햇살 효과 */}
+          <div className="absolute top-0 left-1/4 w-2 h-32 bg-gradient-to-b from-yellow-200 to-transparent opacity-40 transform rotate-12 animate-pulse"></div>
+          <div className="absolute top-0 right-1/3 w-3 h-40 bg-gradient-to-b from-yellow-300 to-transparent opacity-30 transform -rotate-6 animate-pulse" style={{animationDelay: '1s'}}></div>
+          
+          {/* 꽃들 */}
+          <div className="absolute bottom-20 left-20 text-2xl animate-bounce">🌸</div>
+          <div className="absolute bottom-16 right-24 text-xl animate-bounce" style={{animationDelay: '1s'}}>🌻</div>
+          <div className="absolute bottom-24 left-1/2 text-lg animate-bounce" style={{animationDelay: '2s'}}>🌺</div>
+          
+          {/* 나비와 새들 */}
+          <div className="absolute top-16 left-1/4 text-xl animate-bounce opacity-80" style={{animationDelay: '0.5s'}}>🦋</div>
+          <div className="absolute top-12 right-1/4 text-lg animate-bounce opacity-70" style={{animationDelay: '1.5s'}}>🐦</div>
+          <div className="absolute top-20 left-3/4 text-sm animate-bounce opacity-60" style={{animationDelay: '2.5s'}}>🦋</div>
+          
+          {/* 축하 별들 */}
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute animate-pulse"
+              style={{
+                top: `${Math.random() * 80}%`,
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${2 + Math.random() * 2}s`,
+                fontSize: `${16 + Math.random() * 12}px`
+              }}
+            >
+              {['✨', '⭐', '🌟', '💫'][Math.floor(Math.random() * 4)]}
+            </div>
+          ))}
+        </div>
+        
+        <div className="text-center relative z-20">
+          {/* 숲속 클리어 장면 */}
+          <div className="mb-8">
+            <div className="relative bg-gradient-to-br from-green-200/80 via-green-300/60 to-green-400/80 backdrop-blur-sm rounded-3xl p-8 border-4 border-white/50 shadow-2xl">
+              <div className="flex items-center justify-center gap-8">
+                {/* 시냇물과 완성된 다리 */}
+                <div className="flex-1 relative">
+                  <div className="bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 rounded-2xl p-4 relative border-4 border-blue-700 shadow-xl">
+                    <StreamEffect />
+                    <div className="flex justify-center space-x-1 relative z-10">
+                      {[...Array(9)].map((_, i) => (
+                        <div key={i} className="relative">
+                          <div className="w-8 h-12 bg-gradient-to-br from-gray-200 via-gray-300 to-gray-500 rounded-2xl border-2 border-gray-600 shadow-lg">
+                            <div className="absolute inset-1 bg-gradient-to-br from-white/40 to-black/20 rounded-xl"></div>
+                            <div className="absolute top-1 left-1 w-1 h-1 bg-gray-400 rounded-full"></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-sm text-white text-center mt-3 font-bold drop-shadow-lg">완성된 시의 다리! 🌉</p>
+                  </div>
+                </div>
+                
+                {/* 화살표 */}
+                <div className="text-4xl animate-bounce">➡️</div>
+                
+                {/* 숲속에 도착한 동주 */}
+                <div className="text-center">
+                  <div className="relative bg-gradient-to-br from-green-100/80 via-green-200/60 to-green-300/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-white/30">
+                    <div className="text-4xl mb-2">🌲🏠🌳</div>
+                    <div className="animate-bounce mb-2">
+                      <DongjuCharacter mood="excited" size="large" />
+                    </div>
+                    <p className="text-lg text-green-800 font-bold">숲속 도서관 도착! ✨</p>
+                    <div className="mt-2 flex justify-center gap-2">
+                      <span className="text-sm">📚</span>
+                      <span className="text-sm">🖋️</span>
+                      <span className="text-sm">📖</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* 스토리텔링 텍스트 */}
+              <div className="mt-6 bg-white/90 rounded-2xl p-4 border-2 border-white/70">
+                <p className="text-base text-green-800 font-medium italic leading-relaxed">
+                  "시의 힘으로 시냇물을 건너<br/>
+                  마침내 숲속 도서관에 도착했구나!<br/>
+                  이곳에서 더 많은 시를 쓸 수 있겠네."
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <h1 className="text-6xl font-bold text-white mb-6 drop-shadow-2xl animate-pulse">🎉 축하합니다! 🎉</h1>
+          <p className="text-2xl text-white mb-8 font-semibold drop-shadow-lg">동주가 시의 힘으로 무사히 숲에 도착했어요!</p>
+          
+          {/* 선물 상자 */}
+          <div className="bg-white/95 rounded-3xl p-8 mb-8 max-w-md mx-auto shadow-2xl border-4 border-white transform hover:scale-105 transition-all duration-300">
+            <div className="text-8xl mb-6 animate-bounce">🎁</div>
+            <div className="bg-green-100 rounded-2xl p-6 mb-6 border-2 border-green-300">
+              <p className="text-base text-green-800 font-bold leading-relaxed">
+                "시를 사랑하는 마음으로 도와줘서 고맙네.<br/>
+                2층 시문학자료실 데스크에 있는<br/>
+                사서에게 이 화면을 보여주게나."
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-3 text-sm text-gray-600 bg-gray-50 rounded-xl p-3">
+              <Gift className="w-5 h-5" />
+              <span className="font-medium">상품은 1인 1회 수령 가능 • 남은 수량: {giftCount}개</span>
+            </div>
+          </div>
+
+          {/* 점수 표시 */}
+          <div className="bg-white/90 rounded-2xl p-6 mb-8 shadow-xl border-2 border-white max-w-sm mx-auto">
+            <p className="text-2xl font-bold text-gray-800 mb-2">🏆 점수: {score}점</p>
+            <p className="text-base text-gray-600">남은 시간 × 10점 = {timeLeft} × 10</p>
+          </div>
+
+          {/* 버튼들 */}
+          <div className="flex gap-6 justify-center">
+            <button
+              onClick={startGame}
+              className="bg-gradient-to-r from-green-500 via-green-600 to-green-700 hover:from-green-600 hover:via-green-700 hover:to-green-800 text-white font-bold py-4 px-8 rounded-2xl flex items-center gap-3 transition-all duration-300 transform hover:scale-105 shadow-xl border-4 border-green-800"
+            >
+              <RefreshCw className="w-6 h-6" />
+              다시 하기
+            </button>
+            <button
+              onClick={goHome}
+              className="bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700 hover:from-gray-600 hover:via-gray-700 hover:to-gray-800 text-white font-bold py-4 px-8 rounded-2xl flex items-center gap-3 transition-all duration-300 transform hover:scale-105 shadow-xl border-4 border-gray-800"
+            >
+              <Home className="w-6 h-6" />
+              처음으로
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (gameState === 'failure') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-red-200 via-orange-100 to-orange-200 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        {/* 실패 배경 효과 */}
+        <div className="absolute inset-0 opacity-30">
+          {[...Array(10)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute text-3xl animate-bounce"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 2}s`,
+                animationDuration: `${3 + Math.random()}s`
+              }}
+            >
+              {['💧', '😢', '⏰'][Math.floor(Math.random() * 3)]}
+            </div>
+          ))}
+        </div>
+        
+        <div className="text-center relative z-10">
+          <div className="mb-8">
+            <DongjuCharacter mood="worried" size="xlarge" />
+          </div>
+          
+          <h1 className="text-5xl font-bold text-red-800 mb-6 drop-shadow-lg">⏰ 시간 초과!</h1>
+          <p className="text-2xl text-red-700 mb-8 font-semibold">동주가 시냇물을 건너지 못했어요...</p>
+          
+          {/* 실패 메시지 */}
+          <div className="bg-white/95 rounded-3xl p-8 mb-8 shadow-2xl border-4 border-white">
+            <div className="text-6xl mb-4">😔</div>
+            <p className="text-xl text-gray-700 mb-6 font-medium leading-relaxed">
+              "다음에는 더 빨리 도와주게나!<br/>
+              시간이 부족했구나..."
+            </p>
+            <div className="bg-red-50 rounded-xl p-4 border-2 border-red-200">
+              <p className="text-base text-red-700 font-semibold">
+                완성된 구절: {placedCards.filter(card => card !== null).length} / {POEM_LINES.length}
+              </p>
+            </div>
+          </div>
+
+          {/* 버튼들 */}
+          <div className="flex gap-6">
+            <button
+              onClick={startGame}
+              className="bg-gradient-to-r from-red-500 via-red-600 to-red-700 hover:from-red-600 hover:via-red-700 hover:to-red-800 text-white font-bold py-4 px-8 rounded-2xl flex items-center gap-3 transition-all duration-300 transform hover:scale-105 shadow-xl border-4 border-red-800"
+            >
+              <RefreshCw className="w-6 h-6" />
+              다시 도전
+            </button>
+            <button
+              onClick={goHome}
+              className="bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700 hover:from-gray-600 hover:via-gray-700 hover:to-gray-800 text-white font-bold py-4 px-8 rounded-2xl flex items-center gap-3 transition-all duration-300 transform hover:scale-105 shadow-xl border-4 border-gray-800"
+            >
+              <Home className="w-6 h-6" />
+              처음으로
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+};
+
+export default DongjuHelpGame;
